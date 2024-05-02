@@ -15,6 +15,7 @@
 		<result property="price" 				column="price" 		jdbcType="NUMERIC" />
 		<result property="fileName" 	column="image_file" 		jdbcType="VARCHAR" />
 		<result property="regDate" 			column="reg_date" 		jdbcType="DATE" />
+
 	</resultMap>
 	
 	<!-- SQL : INSERT -->
@@ -53,22 +54,21 @@
 	<select  id="getProductList"  parameterType="search"	resultMap="productSelectMap">
 	  	SELECT *
 	  	FROM (	SELECT inner_table.* , ROWNUM AS row_seq
-	  					FROM		(	SELECT prod_no , prod_name , price
-											FROM product
+	  					FROM		(	select p.*, trim(t.TRAN_STATUS_CODE) as proTranCode, t.tran_no as tranNo from product p, transaction t 
+	  									WHERE p.prod_no = t.prod_no(+)
 											<if test="searchCondition != null">
-												<where>
 													<if test="searchCondition == 0 and searchKeyword !='' ">
-										 				prod_no = #{searchKeyword}
+										 				and p.prod_no like '%'||#{searchKeyword}||'%'
 													</if>
 													<if test="searchCondition == 1 and searchKeyword !='' ">
-										 				prod_name = #{searchKeyword}
+										 				and p.prod_name like '%'||#{searchKeyword}||'%'
 													</if>
 													<if test="searchCondition == 2 and searchKeyword !='' ">
-														price = #{searchKeyword}
+														and p.price like '%'||#{searchKeyword}||'%'
 													</if>
-												</where>
+												
 											</if>
-											ORDER BY prod_no ) inner_table
+											ORDER BY p.prod_no ) inner_table
 						WHERE ROWNUM &lt;= #{endRowNum} )
 		WHERE row_seq BETWEEN #{startRowNum} AND #{endRowNum} 
 	 </select>
@@ -91,13 +91,13 @@
 						<if test="searchCondition != null">
 							<where>
 								<if test="searchCondition == 0 and searchKeyword !='' ">
-						 			prod_no = #{searchKeyword}
+						 			prod_no like '%'||#{searchKeyword}||'%'
 								</if>
 								<if test="searchCondition == 1 and searchKeyword !='' ">
-						 		prod_name = #{searchKeyword}
+						 		prod_name like '%'||#{searchKeyword}||'%'
 								</if>
 								<if test="searchCondition == 2 and searchKeyword !='' ">
-								price = #{searchKeyword}
+								price like '%'||#{searchKeyword}||'%'
 								</if>
 							</where>
 						</if> ) countTable						

@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper
+		PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+		"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="PurchaseMapper">
+ 	
+ 	
+	<resultMap id="purchaseSelectMap" type="purchase">
+		<result property="tranNo" 			column="TRAN_NO" 			jdbcType="NUMERIC"/>
+		<result property="purchaseProd.prodNo" 			column="prod_no" 			jdbcType="NUMERIC"/>
+		<result property="buyer.userId"	column="BUYER_ID" 	jdbcType="VARCHAR" />
+
+		<result property="paymentOption" 	column="PAYMENT_OPTION" 		jdbcType="VARCHAR" />
+		<result property="receiverName" column="RECEIVER_NAME" jdbcType="VARCHAR" />
+
+		<result property="receiverPhone"	column="RECEIVER_PHONE" 	jdbcType="VARCHAR" />
+		<result property="divyAddr" 	column="DEMAILADDR" 		jdbcType="VARCHAR" />
+		<result property="divyRequest" column="DLVY_REQUEST" jdbcType="VARCHAR" />		
+		
+		<result property="tranCode" 				column="TRAN_STATUS_CODE" 		jdbcType="VARCHAR" />
+		<result property="orderDate" 	column="ORDER_DATA" 		jdbcType="DATE" />
+		<result property="divyDate" 			column="DLVY_DATE" 		jdbcType="DATE" />
+	</resultMap>
+	
+	<!-- SQL : INSERT -->
+	<insert 	id="insertPurchase"	parameterType="Purchase"  useGeneratedKeys="true" keyProperty="tranNo,orderDate" keyColumn="TRAN_NO,ORDER_DATA">
+	 	INSERT
+		INTO transaction 
+		VALUES	 (SEQ_TRANSACTION_TRAN_NO.NEXTVAL ,
+		 #{purchaseProd.prodNo} , 
+		 #{buyer.userId} ,
+		 #{paymentOption} ,
+		  #{receiverName} , #{receiverPhone} ,
+		  #{divyAddr},
+		  #{divyRequest},
+		  1,
+		   SYSDATE,
+		   #{divyDate} )
+	 </insert>
+	 
+	 <!-- SQL : SELECT ONE -->
+	 <select 	id="findPurchase"	parameterType="int"	resultMap="purchaseSelectMap">
+		SELECT
+		tran_no ,PROD_NO,
+  			BUYER_ID, tran_status_code , prod_no , buyer_id
+		 ,  payment_option ,  receiver_name , receiver_phone, demailaddr,
+		 	dlvy_request, TO_CHAR(ORDER_DATA,'yyyy-mm-dd') as ORDER_DATA,
+			TO_CHAR(DLVY_DATE, 'yyyy-mm-dd') as DLVY_DATE 
+		FROM TRANSACTION 
+		WHERE TRAN_NO = #{value}
+	 </select>
+	 
+	<!-- SQL : UPDATE -->
+	<update id="updatePurchase"	parameterType="purchase" >
+	   	UPDATE TRANSACTION
+	   	<set>
+	   		PAYMENT_OPTION 	= #{paymentOption} ,
+			receiver_name	= #{receiverName},
+			receiver_phone = #{receiverPhone} ,
+			demailaddr	=	#{divyAddr},
+			<if test="divyRequest != null">
+				dlvy_request = #{divyRequest},
+			</if>
+			<if test="divyDate != null">
+				dlvy_date = #{divyDate},
+			</if>
+			tran_status_code = #{tranCode}
+	   	</set>
+	   	WHERE TRAN_NO = #{tranNo}
+	</update>
+		 
+	<!-- SQL : SELECT LIST -->
+	<!-- 
+		MyBatis는 여러 개의 인자를 받는게 복잡하고 어렵다 
+		그래서 우리가 도메인 객체를 사용해서 여러 개의 데이터를 도메인에 담아서 
+		MyBatis의 인자로 넘겨주는 것.
+		
+		근데 만약에 여러 개의 도메인을 보내고 싶다면 어떻게 하지?????
+		Map을 쓰자
+	-->
+	<select  id="getPurchaseList"  parameterType="map"	resultMap="purchaseSelectMap">
+	  	SELECT *
+	  	FROM (	SELECT inner_table.* , ROWNUM AS row_seq
+	  					FROM		(	SELECT TRAN_NO,PROD_NO,BUYER_ID,trim(PAYMENT_OPTION) as PAYMENT_OPTION,
+	  					RECEIVER_NAME,RECEIVER_PHONE,DEMAILADDR,DLVY_REQUEST,trim(TRAN_STATUS_CODE) as TRAN_STATUS_CODE,
+	  					ORDER_DATA,DLVY_DATE
+											FROM transaction
+											<if test="userId != null">
+										 				WHERE BUYER_ID = #{userId}
+											</if>
+											ORDER BY TRAN_NO ) inner_table
+						WHERE ROWNUM &lt;= #{search.endRowNum} )
+		WHERE row_seq BETWEEN #{search.startRowNum} AND #{search.endRowNum} 
+		
+		
+		
+		
+	 </select>
+	 	<!--  위 두번째 subQuery 의  
+	 			WHERE ROWNUM &lt;= #{endRowNum} ) 는
+	 			WHERE ROWNUM <= #{endRowNum} ) 의미이며..
+	 			< 는 keyword 로 &lt; 를	사용.
+	 			
+	 			<![CDATA[  ~~~  ]]> 를 이용하여 아래와 같이 사용  할 수 있다.
+	 			CDATA ==> Character Data 의 의미 Java 에서 \n 같은 특수문자 처리  
+
+				WHERE ROWNUM <![CDATA[ <=]]> #{endRowNum} )
+		-->
+	
+	<!-- SQL : SELECT ROwW Count -->	 
+	 <select  id="getTotalCount"  parameterType="string"	 resultType="int">
+	  	SELECT COUNT(*) as count from transaction
+	  	<where>
+	  		buyer_id = #{value}
+	  	</where>						
+	 </select>
+	 
+</mapper>

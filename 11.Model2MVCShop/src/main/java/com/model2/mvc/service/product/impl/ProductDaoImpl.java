@@ -12,37 +12,35 @@ import com.model2.mvc.service.domain.Product;
 import com.model2.mvc.service.product.ProductDao;
 
 @Repository("productDaoImpl")
-public class ProductDaoImpl implements ProductDao{
+public class ProductDaoImpl implements ProductDao {
 
 	@Autowired
 	@Qualifier("sqlSessionTemplate")
 	private SqlSession sqlSession;
+
 	public void setSqlSession(SqlSession session) {
 		this.sqlSession = session;
 	}
-	
-	
-	
+
 	public ProductDaoImpl() {
 		System.out.println(this.getClass());
 	}
 
-
 	@Override
 	public void insertProduct(Product product) throws Exception {
-		sqlSession.insert("ProductMapper.insertProduct",product);
-		
+		sqlSession.insert("ProductMapper.insertProduct", product);
+
 	}
 
 	@Override
 	public void updateProduct(Product product) throws Exception {
-		sqlSession.update("ProductMapper.updateProduct",product);
-		
+		sqlSession.update("ProductMapper.updateProduct", product);
+
 	}
 
 	@Override
 	public List<Product> getProductList(Search search) throws Exception {
-		return sqlSession.selectList("ProductMapper.getProductList",search);
+		return sqlSession.selectList("ProductMapper.getProductList", search);
 	}
 
 	@Override
@@ -54,5 +52,5 @@ public class ProductDaoImpl implements ProductDao{
 	public int getTotalCount(Search search) throws Exception {
 		return sqlSession.selectOne("ProductMapper.getTotalCount", search);
 	}
-	
+
 }

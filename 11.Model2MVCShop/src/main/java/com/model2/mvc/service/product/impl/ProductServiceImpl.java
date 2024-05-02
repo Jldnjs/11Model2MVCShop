@@ -15,21 +15,19 @@ import com.model2.mvc.service.product.ProductService;
 
 //==> 회원관리 서비스 구현
 @Service("productServiceImpl")
-public class ProductServiceImpl implements ProductService{
-	
+public class ProductServiceImpl implements ProductService {
+
 	@Autowired
 	@Qualifier("productDaoImpl")
 	private ProductDao productDao;
+
 	public void setProductDao(ProductDao productDao) {
 		this.productDao = productDao;
 	}
-	
-	
 
 	public ProductServiceImpl() {
 		System.out.println(this.getClass());
 	}
-
 
 	@Override
 	public Product getProduct(int prodNo) throws Exception {
@@ -40,28 +38,29 @@ public class ProductServiceImpl implements ProductService{
 	public Map<String, Object> getProductList(Search search) throws Exception {
 		List<Product> list = productDao.getProductList(search);
 		int totalCount = productDao.getTotalCount(search);
-		
+
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("list", list);
 		map.put("totalcount", totalCount);
-		
+
 		return map;
 	}
 
 	@Override
-	public void insertProduct(Product productVO) throws Exception {
+	public Product insertProduct(Product productVO) throws Exception {
 		productDao.insertProduct(productVO);
-		
+
+		return productVO;
 	}
 
 	@Override
 	public void updateProduct(Product productVO) throws Exception {
 		productDao.updateProduct(productVO);
 	}
-	
+
 	@Override
-	public int getTotalCount(Search search) throws Exception{
+	public int getTotalCount(Search search) throws Exception {
 		return productDao.getTotalCount(search);
 	}
-	
+
 }

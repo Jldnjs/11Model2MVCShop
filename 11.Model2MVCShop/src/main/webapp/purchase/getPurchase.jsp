@@ -1,10 +1,13 @@
 
 <%@ page language="java" contentType="text/html; charset=EUC-KR"
-	pageEncoding="EUC-KR"%>
+    pageEncoding="EUC-KR"%>
+    
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<!DOCTYPE html>
 <html>
 <head>
+<title>구매상세조회</title>
 
 
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -36,94 +39,107 @@
             padding-top : 50px;
         }
     </style>
-
-<title>상품상세조회</title>
-
 	<script type="text/javascript">
-		
+	
 		$(function(){
-			$("button.btn.btn-primary:contains('구매')").on("click",function(){
-				self.location="/purchase/addPurchaseView?prod_no=${product.prodNo}"
+			$("button.btn.btn-primary:contains('확인')").on("click",function(){
+				history.go(-1);
+			});
+			
+			$("button.btn.btn-primary:contains('수정')").on("click",function(){
+				self.location = "/purchase/updatePurchaseView?tranNo=${purchase.tranNo}"
 			});
 		});
-		
-
+	
 	</script>
 
 </head>
 
 <body>
-	<!-- ToolBar Start /////////////////////////////////////-->
+
 	<jsp:include page="/layout/toolbar.jsp" />
-   	<!-- ToolBar End /////////////////////////////////////-->
-	
 	<!--  화면구성 div Start /////////////////////////////////////-->
 	<div class="container">
 	<div class="page-header">
-	       <h3 class=" text-info">상품상세조회</h3>
+	       <h3 class=" text-info">구매 상세조회</h3>
 	    </div>
-	
+
 		<div class="row">
-	  		<div class="col-xs-4 col-md-2"><strong>상품번호</strong></div>
-			<div class="col-xs-8 col-md-4">${product.prodNo}</div>
+	  		<div class="col-xs-4 col-md-2"><strong>물품번호 </strong></div>
+			<div class="col-xs-8 col-md-4">${purchase.purchaseProd.prodNo}</div>
 		</div>
 		
 		<hr/>
 		
 		<div class="row">
-	  		<div class="col-xs-4 col-md-2 "><strong>상품명</strong></div>
-			<div class="col-xs-8 col-md-4">${product.prodName}</div>
+	  		<div class="col-xs-4 col-md-2 "><strong>구매자아이디 </strong></div>
+			<div class="col-xs-8 col-md-4">${purchase.buyer.userId }</div>
 		</div>
 		
 		<hr/>
 		
 		<div class="row">
-	  		<div class="col-xs-4 col-md-2 "><strong>상품이미지</strong></div>
-			<div class="col-xs-8 col-md-4">${product.fileName}	</div>
+	  		<div class="col-xs-4 col-md-2 "><strong>구매방법</strong></div>
+			<div class="col-xs-8 col-md-4">
+				<c:choose>
+					<c:when test="${purchase.paymentOption eq '1' }">현금구매</c:when>
+					<c:otherwise>신용구매</c:otherwise>
+				</c:choose>
+			</div>
 		</div>
 		
 		<hr/>
 		
 		<div class="row">
-	  		<div class="col-xs-4 col-md-2"><strong>상품상세정보</strong></div>
-			<div class="col-xs-8 col-md-4">${product.prodDetail}</div>
+	  		<div class="col-xs-4 col-md-2"><strong>구매자이름</strong></div>
+			<div class="col-xs-8 col-md-4">${purchase.receiverName }</div>
 		</div>
 		
 		<hr/>
 		
 		<div class="row">
-	  		<div class="col-xs-4 col-md-2 "><strong>제조일자</strong></div>
-			<div class="col-xs-8 col-md-4">${product.manuDate}</div>
+	  		<div class="col-xs-4 col-md-2 "><strong>구매자연락처</strong></div>
+			<div class="col-xs-8 col-md-4">${purchase.receiverPhone}</div>
 		</div>
 		
 		<hr/>
 		
 		<div class="row">
-	  		<div class="col-xs-4 col-md-2 "><strong>가격</strong></div>
-			<div class="col-xs-8 col-md-4">${product.price}</div>
+	  		<div class="col-xs-4 col-md-2 "><strong>구매자주소</strong></div>
+			<div class="col-xs-8 col-md-4">${purchase.divyAddr }</div>
 		</div>
 		
 		<hr/>
 		
 		<div class="row">
-	  		<div class="col-xs-4 col-md-2 "><strong>등록일자</strong></div>
-			<div class="col-xs-8 col-md-4">${product.regDate}</div>
+	  		<div class="col-xs-4 col-md-2 "><strong>구매요청사항</strong></div>
+			<div class="col-xs-8 col-md-4">${purchase.divyRequest }</div>
+		</div>
+		<hr/>
+		<div class="row">
+	  		<div class="col-xs-4 col-md-2 "><strong>배송희망일</strong></div>
+			<div class="col-xs-8 col-md-4">${purchase.divyDate  }</div>
+		</div>
+		<hr/>
+		<div class="row">
+	  		<div class="col-xs-4 col-md-2 "><strong>주문일</strong></div>
+			<div class="col-xs-8 col-md-4">${purchase.orderDate }</div>
 		</div>
 		
 		<hr/>
 		
 		<div class="row">
 	  		<div class="col-md-12 text-center ">
-	  			<button type="button" class="btn btn-primary">구매</button>
+	  			<button type="button" class="btn btn-primary">수정</button>
+	  			&nbsp; &nbsp; &nbsp; 
+	  			<button type="button" class="btn btn-primary">확인</button>
 	  		</div>
 		</div>
-		
+
 		
 		<br/>
 		
  	</div>
- 	<!--  화면구성 div end /////////////////////////////////////-->
 
 </body>
-
-</html>	
+</html>

@@ -93,21 +93,21 @@
 								},
 								success : function(JSONData , status) {
 
-									var displayValue = "<h6>"
+									var displayValue = "<h5>"
 																+"아이디 : "+JSONData.userId+"<br/>"
 																+"이  름 : "+JSONData.userName+"<br/>"
 																+"이메일 : "+JSONData.email+"<br/>"
 																+"ROLE : "+JSONData.role+"<br/>"
 																+"등록일 : "+JSONData.regDateString+"<br/>"
-																+"</h6>";
-									$("h6").remove();
+																+"</h5>";
+									$("h5").remove();
 									$( "#"+userId+"" ).html(displayValue);
 								}
 						});
 						////////////////////////////////////////////////////////////////////////////////////////////
 					
 			});
-			
+			//$(  "td:nth-child(5) > i" ).css("background-color","black");
 			//==> userId LINK Event End User 에게 보일수 있도록 
 			$( ".ct_list_pop td:nth-child(3)" ).css("color" , "red");
 			$("h7").css("color" , "red");
@@ -194,7 +194,7 @@
 			  <td align="left">${user.userName}</td>
 			  <td align="left">${user.email}</td>
 			  <td align="left">
-			  	<i class="glyphicon glyphicon-ok" id= "${user.userId}"></i>
+			  	<i class="glyphicon glyphicon-search" id= "${user.userId}"></i>
 			  	<input type="hidden" value="${user.userId}">
 			  </td>
 			</tr>
